@@ -4,7 +4,7 @@
  *
  * 部署方式：
  *   1. script.google.com 新增專案，把這整份貼進 Code.gs
- *   2. 先執行一次 setupSheet()（會自動建立試算表並寫入表頭）
+ *   2. 先執行一次 setupSheet()（會建立試算表，並建好「拾花巡禮」「安森秋跑」兩個分頁）
  *   3. 部署 → 新增部署作業 → 類型「網頁應用程式」
  *        執行身分：我     誰可以存取：所有人
  *   4. 複製 /exec 網址，貼到前端 index.html 的 SCRIPT_URL
@@ -14,7 +14,8 @@
 
 /* ══════════════ 設定 ══════════════ */
 
-var SHEET_NAME = '報名名單';
+// 依組別分頁寫入；分頁名稱必須與前端 radio 的 value 完全一致
+var SHEET_NAMES = { '拾花巡禮': '拾花巡禮', '安森秋跑': '安森秋跑' };
 
 // 留空的話，setupSheet() 會自動建立一份新試算表並記住它的 ID。
 // 若要指定既有試算表，把 ID 填進來。
@@ -52,9 +53,23 @@ function spreadsheet_() {
   return SpreadsheetApp.openById(id);
 }
 
-function sheet_() {
+function formatSheet_(sh) {
+  sh.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS])
+    .setFontWeight('bold').setBackground('#1f2a24').setFontColor('#faf6f1');
+  sh.setFrozenRows(1);
+  var widths = [160, 110, 110, 230, 130, 140, 120, 150, 90, 100, 200];
+  for (var i = 0; i < widths.length; i++) sh.setColumnWidth(i + 1, widths[i]);
+  return sh;
+}
+
+/** 依組別取得對應分頁；沒有就建一個並排好版 */
+function sheet_(category) {
+  var name = SHEET_NAMES[category];
+  if (!name) throw new Error('未知的組別：' + category);
   var ss = spreadsheet_();
-  return ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
+  var sh = ss.getSheetByName(name);
+  if (!sh) sh = formatSheet_(ss.insertSheet(name));
+  return sh;
 }
 
 /** 第一次使用請先手動執行這個函式。可重複執行，不會刪資料。 */
@@ -69,24 +84,34 @@ function setupSheet() {
     Logger.log('已建立試算表：' + ss.getUrl());
   }
 
-  var sh = ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
-  sh.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS])
-    .setFontWeight('bold').setBackground('#1f2a24').setFontColor('#faf6f1');
-  sh.setFrozenRows(1);
-  var widths = [160, 110, 110, 230, 130, 140, 120, 150, 90, 100, 200];
-  for (var i = 0; i < widths.length; i++) sh.setColumnWidth(i + 1, widths[i]);
+  CATEGORIES.forEach(function (c) {
+    var name = SHEET_NAMES[c];
+    var sh = ss.getSheetByName(name) || ss.insertSheet(name);
+    formatSheet_(sh);
+    Logger.log('分頁「' + name + '」目前 ' + Math.max(0, sh.getLastRow() - 1) + ' 筆');
+  });
 
   Logger.log('試算表網址：' + ss.getUrl());
-  Logger.log('目前筆數：' + Math.max(0, sh.getLastRow() - 1));
+  Logger.log('總筆數：' + allRows_().length);
   return ss.getUrl();
 }
 
-/** 所有資料列（不含表頭） */
+/** 兩個分頁的資料列合併（不含表頭），依報名時間排序 */
 function allRows_() {
-  var sh = sheet_();
-  var last = sh.getLastRow();
-  if (last < 2) return [];
-  return sh.getRange(2, 1, last - 1, HEADERS.length).getValues();
+  var ss = spreadsheet_();
+  var out = [];
+  CATEGORIES.forEach(function (c) {
+    var sh = ss.getSheetByName(SHEET_NAMES[c]);
+    if (!sh) return;
+    var last = sh.getLastRow();
+    if (last < 2) return;
+    sh.getRange(2, 1, last - 1, HEADERS.length).getValues().forEach(function (r) {
+      // getLastRow 有時會多報空列，用報名時間判斷是不是真的有資料
+      if (String(r[0]).trim() !== '') out.push(r);
+    });
+  });
+  out.sort(function (a, b) { return String(a[0]).localeCompare(String(b[0])); });
+  return out;
 }
 
 /* ══════════════ 工具 ══════════════ */
@@ -164,7 +189,7 @@ function doPost(e) {
     // 費用一律後端重算，不採用前端送來的數字
     var fee = feeFor_(category, club);
 
-    sheet_().appendRow([
+    sheet_(category).appendRow([
       Utilities.formatDate(new Date(), tz_(), 'yyyy/MM/dd HH:mm:ss'),
       category, name, email, phone, club, emgName, emgPhone,
       fee, fee ? '未繳' : '免費', ''
@@ -295,8 +320,13 @@ function statsObj_() {
     byClub[r[5]] = (byClub[r[5]] || 0) + 1;
     if (Number(r[8]) > 0) { due += Number(r[8]); if (str_(r[9]) !== '已繳') unpaid++; }
   });
+  var ss = spreadsheet_(), sheetCounts = {};
+  CATEGORIES.forEach(function (c) {
+    var sh = ss.getSheetByName(SHEET_NAMES[c]);
+    sheetCounts[SHEET_NAMES[c]] = sh ? Math.max(0, sh.getLastRow() - 1) : 0;
+  });
   return { status: 'ok', total: rows.length, byCategory: byCat, byClub: byClub,
-           feeDue: due, unpaidCount: unpaid };
+           bySheet: sheetCounts, feeDue: due, unpaidCount: unpaid };
 }
 
 function listPage_() {
