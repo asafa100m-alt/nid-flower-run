@@ -301,8 +301,12 @@ function doGet(e) {
     return action === 'list' ? listPage_() : json_(statsObj_());
   }
 
+  // 公開的人數查詢：只回數字，不含任何個資，供報名頁顯示
   if (action === 'count') {
-    return json_({ status: 'ok', count: allRows_().length });
+    var rows = allRows_(), by = {};
+    CATEGORIES.forEach(function (c) { by[c] = 0; });
+    rows.forEach(function (r) { if (by[r[1]] !== undefined) by[r[1]]++; });
+    return json_({ status: 'ok', total: rows.length, byCategory: by });
   }
 
   return ContentService.createTextOutput(

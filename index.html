@@ -56,7 +56,11 @@ a{color:var(--rose);}
 @keyframes wfSway{from{transform:rotate(-.9deg);}to{transform:rotate(.9deg);}}
 .hero-art{position:absolute;right:calc(50% - 596px);bottom:44px;
   width:148px;height:399px;opacity:.82;color:var(--paper);pointer-events:none;}
-@media(max-width:1239px){.hero-art{display:none;}}
+@media(max-width:1239px){
+  /* 手機／平板：縮小、降透明度，移到右下角當底紋，文字壓在上面 */
+  .hero-art{right:-34px;bottom:-12px;width:112px;height:302px;opacity:.26;}
+  .hero .wrap{position:relative;z-index:1;}
+}
 .success-art{width:84px;height:226px;margin:0 auto 14px;color:var(--rose);}
 @media(prefers-reduced-motion:reduce){
   .wf-grow{clip-path:none;animation:none;}
@@ -92,6 +96,14 @@ section.block{padding:52px 0 8px;}
 .catcard .cl{font-size:15px;color:var(--body);margin:0 0 12px;line-height:1.65;}
 .catcard .cq{font-size:15px;font-weight:700;margin:0;}
 .catcard .cfee{font-size:14px;color:var(--rose);font-weight:700;margin:8px 0 0;}
+.ccount{display:none;align-items:baseline;gap:6px;margin:12px 0 0;padding:9px 12px;
+  background:#fffdfa;border:1px solid var(--line);border-radius:10px;font-size:13.5px;color:var(--muted);}
+.catcard.rose .ccount{background:#fff;border-color:var(--blush-line);}
+.ccount.show{display:flex;}
+.ccount b{font-size:19px;font-weight:900;color:var(--ink);line-height:1;}
+.totalcount{display:none;font-size:14.5px;color:var(--body);margin:0 0 16px;line-height:1.7;}
+.totalcount.show{display:block;}
+.totalcount b{color:var(--rose);font-weight:900;font-size:17px;}
 
 /* ───── 警語 ───── */
 .warn{background:var(--rose);color:#fff;border-radius:16px;padding:22px 24px;margin:4px 0 0;}
@@ -251,6 +263,7 @@ footer .fl{margin:0 0 8px;}
         <p class="cl">公園 → 禮洋 → 浪花 → Tipsy → 公園，三站各收一枝花。可跑可走，重點是互動不是成績。</p>
         <p class="cq">預估 55 – 65 分鐘</p>
         <p class="cfee">當期學員免費・非當期學員 NT$500</p>
+        <p class="ccount" id="count-flower">目前 <b>–</b> 人報名</p>
       </div>
       <div class="catcard sage">
         <p class="ct">安森秋跑</p>
@@ -258,8 +271,10 @@ footer .fl{margin:0 0 8px;}
         <p class="cl">留在大安森林公園跑圈，不停站、不收花。依能力自選圈數，教練帶跑。</p>
         <p class="cq">預估 30 – 60 分鐘</p>
         <p class="cfee">全程免費</p>
+        <p class="ccount" id="count-park">目前 <b>–</b> 人報名</p>
       </div>
     </div>
+    <p class="totalcount" id="count-total">目前已有 <b>–</b> 人報名。</p>
     <p class="paynote">需繳費者於<b>當天報到時現場現金繳款</b>，不需事先匯款。</p>
     <div class="warn">
       <h3>⚠️ 組別選定後不得更換</h3>
@@ -526,6 +541,27 @@ footer .fl{margin:0 0 8px;}
       ? ("非 NID 當期學員・" + esc(cat) + "，<b>當天報到時現場現金繳款</b>，不需事先匯款。")
       : (esc(cat) + "不收費，當天直接到<b>環形迴廊</b>報到就好。");
   }
+  /* 報名人數：只取數字，抓不到就整塊不顯示，不會秀出誤導的 0 */
+  function loadCounts() {
+    if (DEMO) return;
+    fetch(SCRIPT_URL + "?action=count&t=" + Date.now())
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d || d.status !== "ok") return;
+        var map = { "拾花巡禮": "count-flower", "安森秋跑": "count-park" };
+        Object.keys(map).forEach(function (cat) {
+          var el = document.getElementById(map[cat]);
+          if (!el) return;
+          el.querySelector("b").textContent = d.byCategory[cat];
+          el.classList.add("show");
+        });
+        var t = document.getElementById("count-total");
+        if (t) { t.querySelector("b").textContent = d.total; t.classList.add("show"); }
+      })
+      .catch(function (e) { console.warn("人數讀取失敗", e); });
+  }
+  loadCounts();
+
   clubSelect.addEventListener("change", updateFee);
 
   /* 活動 LINE 社群按鈕 */
