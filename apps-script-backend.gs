@@ -28,7 +28,7 @@ var ADMIN_KEY = 'CHANGE_ME_請改掉這組字串';
 var REG_CLOSE_AT = new Date('2026-10-24T23:59:59+08:00');
 
 // 非 NID 當期學員的費用，依組別
-var FEE = { '拾花巡禮': 500, '安森秋跑': 0 };
+var FEE = { '拾花巡禮': 500, '安森秋跑': 500 };
 var NON_MEMBER_LABEL = '非 NID 當期學員';
 var CATEGORIES = ['拾花巡禮', '安森秋跑'];
 

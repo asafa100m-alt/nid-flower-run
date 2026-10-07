@@ -268,9 +268,9 @@ footer .fl{margin:0 0 8px;}
       <div class="catcard sage">
         <p class="ct">安森秋跑</p>
         <p class="cd">2 / 3 / 4 圈</p>
-        <p class="cl">留在大安森林公園跑圈，不停站、不收花。依能力自選圈數，教練帶跑。</p>
+        <p class="cl">留在大安森林公園跑圈，不停站、不收花。依能力自選圈數，教練帶跑。回到安森後，<b>一樣由浪花花藝帶花藝教學與包裝</b>，花材由主辦提供。</p>
         <p class="cq">預估 30 – 60 分鐘</p>
-        <p class="cfee">全程免費</p>
+        <p class="cfee">當期學員免費・非當期學員 NT$500</p>
         <p class="ccount" id="count-park">目前 <b>–</b> 人報名</p>
       </div>
     </div>
@@ -336,8 +336,8 @@ footer .fl{margin:0 0 8px;}
               <input type="radio" name="category" value="安森秋跑" />
               <span class="box">
                 <span class="pt">安森秋跑</span>
-                <span class="pd">留在公園跑圈，不停站、不收花</span>
-                <span class="pm">2 / 3 / 4 圈 ・ 免費</span>
+                <span class="pd">留在公園跑圈，終點一樣做花</span>
+                <span class="pm">2 / 3 / 4 圈 ・ 當期學員免費／非當期 NT$500</span>
               </span>
               <span class="tick">✓</span>
             </label>
@@ -406,7 +406,7 @@ footer .fl{margin:0 0 8px;}
               <li><b>本活動未投保任何保險</b>，主辦單位未為本活動投保公共意外責任險或團體平安險。參加者請自行評估運動風險並斟酌自行投保；活動期間若發生意外，工作人員會協助現場處置與緊急聯絡，但本活動不提供保險理賠。</li>
               <li>本活動於一般道路與公園步道進行，<b>不進行交通管制</b>。請全程走人行道與行人穿越道，遵守號誌，路口由工作人員引導整組停等後再通過。</li>
               <li>請自行評估身體狀況，有心血管疾病、近期受傷或身體不適者請勿勉強參加。活動中如有不適請立即向工作人員反映。</li>
-              <li>拾花巡禮的花材由合作花店提供，數量依報名人數採買。</li>
+              <li>花材由合作花店提供，數量依報名人數採買：拾花巡禮於沿途三站收集，安森秋跑的花材於終點提供。</li>
               <li>報名資料僅供本次活動聯繫與名單管理使用，活動結束後依規定銷毀。</li>
               <li>活動現場會進行攝影紀錄，照片可能用於 NID 社群與活動紀錄；不願入鏡者請於報到時告知工作人員。</li>
               <li>遇颱風、豪雨等不可抗力因素，主辦單位得調整或取消活動，將以 Email 與 LINE 另行通知。</li>
@@ -465,8 +465,9 @@ footer .fl{margin:0 0 8px;}
   var REG_CLOSE_AT = new Date("2026-10-24T23:59:59+08:00");
   var REG_CLOSE_TEXT = "2026/10/24（六）24:00";
   // 非當期學員費用，依組別不同
-  var FEE_NON_MEMBER = { "拾花巡禮": 500, "安森秋跑": 0 };
+  var FEE_NON_MEMBER = { "拾花巡禮": 500, "安森秋跑": 500 };
   var NON_MEMBER_LABEL = "非 NID 當期學員";
+  var CATEGORIES = ["拾花巡禮", "安森秋跑"];
   var LINE_OFFICIAL = "https://page.line.me/eei8717i";
   var LINE_GROUP = "https://line.me/ti/g2/5BBOmVbrCiD6m8Uzy6xigwzM1qihEJ_U0JUcKA?utm_source=invitation&utm_medium=link_copy&utm_campaign=default";
   /* ═══════════════════════════════════════ */
@@ -532,8 +533,13 @@ footer .fl{margin:0 0 8px;}
       return;
     }
     if (!cat) {
-      feeAmountEl.textContent = "NT$ —";
-      feeDetailEl.innerHTML = "拾花巡禮 NT$500、安森秋跑免費，<b>請先選組別</b>才算得出金額。";
+      // 兩組同價，所以沒選組別也算得出金額
+      var vals = CATEGORIES.map(function (c) { return FEE_NON_MEMBER[c] || 0; });
+      var same = vals.every(function (v) { return v === vals[0]; });
+      feeAmountEl.textContent = same ? ("NT$" + vals[0]) : "NT$ —";
+      feeDetailEl.innerHTML = same
+        ? "非 NID 當期學員，兩組同價，<b>當天報到時現場現金繳款</b>。"
+        : "費用依組別而定，<b>請先選組別</b>。";
       return;
     }
     var amt = feeFor(cat, club);
