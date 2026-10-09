@@ -126,6 +126,28 @@ section.block{padding:52px 0 8px;}
 .feebox h3{margin:0 0 8px;font-size:18px;font-weight:700;color:#2f4a2b;}
 .feebox p{margin:0;font-size:15px;color:#2f4a2b;line-height:1.7;}
 .shops{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.moments{list-style:none;padding:0;margin:0 0 18px;display:grid;
+  grid-template-columns:repeat(4,1fr);gap:16px;}
+@media(max-width:820px){.moments{grid-template-columns:1fr 1fr;}}
+@media(max-width:520px){.moments{grid-template-columns:1fr;}}
+.moments li{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 20px;}
+.moments li.main{background:var(--blush);border-color:var(--blush-line);}
+.moments li.fin{background:var(--ink);border-color:var(--ink);}
+.moments .mk{font-size:12.5px;letter-spacing:.08em;font-weight:700;color:var(--rose);margin:0 0 8px;}
+.moments li.fin .mk{color:var(--rose-bright);}
+.moments h3{font-size:21px;font-weight:700;margin:0 0 9px;line-height:1.35;}
+.moments li.fin h3{color:var(--paper);}
+.moments p.mt{font-size:14.5px;color:var(--body);margin:0;line-height:1.75;}
+.moments li.main p.mt{color:#4a4038;}
+.moments li.fin p.mt{color:#cfd8cd;}
+.classbox{background:linear-gradient(150deg,#16201b 0%,#2c3b30 72%,#4a3038 100%);
+  color:var(--paper);border-radius:18px;padding:28px 26px;margin:18px 0 0;}
+.classbox .ck{font-size:12.5px;letter-spacing:.16em;font-weight:700;color:var(--rose-bright);margin:0 0 10px;}
+.classbox h3{font-size:22px;font-weight:700;margin:0 0 12px;line-height:1.4;}
+.classbox p{font-size:15px;color:#d8cfc4;margin:0 0 14px;line-height:1.8;}
+.classbox ul{list-style:none;padding:0;margin:0;display:grid;gap:8px;}
+.classbox li{font-size:14.5px;color:#d8cfc4;padding-left:20px;position:relative;line-height:1.7;}
+.classbox li::before{content:"—";position:absolute;left:0;color:var(--rose-bright);}
 @media(max-width:600px){.shops{grid-template-columns:1fr;gap:14px;}}
 .shop{background:var(--card);border:1px solid var(--line);border-radius:16px;
   padding:26px 18px 22px;text-align:center;}
@@ -246,7 +268,7 @@ footer .fl{margin:0 0 8px;}
     <hr class="rule" />
     <p class="lede">從一間花店跑向下一間花店，每一站收集一枝花。<br />跑一段路，也完成一束花。</p>
     <a class="hero-cta" href="#register">我要報名 →</a>
-    <p class="deadline">⏳ 報名至 <b>10/24（六）</b> 截止 —— 花材需向三間花店預訂，逾期恕不受理</p>
+    <p class="deadline">⏳ 報名至 <b>10/24（六）</b> 截止 —— 花材需提前預訂，逾期恕不受理</p>
   </div>
   <div class="hero-art wf-art wf-sway" aria-hidden="true">
     <div class="wf-grow" style="height:100%"><svg><use href="#wf-poppy"/></svg></div>
@@ -278,7 +300,7 @@ footer .fl{margin:0 0 8px;}
       <div class="catcard sage">
         <p class="ct">安森秋跑</p>
         <p class="cd">2 / 3 / 4 圈</p>
-        <p class="cl">留在大安森林公園跑圈，不停站、不收花。依能力自選圈數，教練帶跑。回到安森後，<b>一樣由浪花花藝帶花藝教學與包裝</b>，花材由主辦提供。</p>
+        <p class="cl">留在大安森林公園跑圈，不停站、不收花。依能力自選圈數，教練帶跑。回到安森後，<b>一樣由浪花花藝帶花藝教學與包裝</b>。</p>
         <p class="cq">預估 30 – 60 分鐘</p>
         <p class="ccount" id="count-park">目前 <b>–</b> 人報名</p>
       </div>
@@ -291,7 +313,7 @@ footer .fl{margin:0 0 8px;}
     </div>
     <div class="warn">
       <h3>⚠️ 組別選定後不得更換</h3>
-      <p>花材是依報名人數向花店預訂的，<b>送出後無法改組別，活動當天也不接受臨時換組</b>。</p>
+      <p>花材是依報名人數提前預訂的，<b>送出後無法改組別，活動當天也不接受臨時換組</b>。</p>
     </div>
   </div>
 </section>
@@ -321,6 +343,50 @@ footer .fl{margin:0 0 8px;}
   </div>
 </section>
 
+<section class="block">
+  <div class="wrap">
+    <p class="sec-eyebrow">W H Y   F L O W E R S</p>
+    <h2 class="sec-title">重點不是哪一枝花，是你在第幾公里拿到它</h2>
+    <p class="p">同樣一枝花，在花店買是商品；在你跑到快撐不住的時候拿到，就不一樣了。這條路線上的每一站，剛好對應跑步裡的一個時刻。</p>
+
+    <ol class="moments">
+      <li>
+        <p class="mk">1 KM・禮洋</p>
+        <h3>你已經出門了</h3>
+        <p class="mt">身體還沒熱、呼吸還沒順，最想找理由回家的就是這一段。第一枝花，是你已經踏出門的證明。</p>
+      </li>
+      <li class="main">
+        <p class="mk">1.2 KM・浪花　主花</p>
+        <h3>朝著光的方向</h3>
+        <p class="mt">向日葵會跟著太陽轉。跑步最難的從來不是跑不動，是忘了自己朝哪裡去 —— 整束花的主花，在這裡拿到。</p>
+      </li>
+      <li>
+        <p class="mk">3 KM・TIPSY</p>
+        <h3>還沒結束</h3>
+        <p class="mt">收完這一枝，還有今天最長的 2.4 公里要跑回去。一場跑步能不能跑完，通常是在這種時候決定的。</p>
+      </li>
+      <li class="fin">
+        <p class="mk">終點・大安森林公園</p>
+        <h3>綁成一束</h3>
+        <p class="mt">三枝分開看都只是花。綁起來，才是你今天走過的那條路。</p>
+      </li>
+    </ol>
+
+    <p class="note">安森秋跑沒有沿途的站，但有自己數的圈 —— 同樣的花在終點等你，一樣自己動手做。各站實際花材由花店當天選定，活動前公布。</p>
+
+    <div class="classbox">
+      <p class="ck">F I N I S H ・ 2 0  M I N</p>
+      <h3>終點的 20 分鐘：不是領一束花，是自己做一束花</h3>
+      <p>由浪花花藝的花藝師現場帶 —— 怎麼挑、怎麼修枝、怎麼配色、怎麼包起來。這是一堂真的花藝課，不是把花塞給你。</p>
+      <ul>
+        <li>完全沒碰過花的人也做得出來，20 分鐘就有成品</li>
+        <li>做完直接帶回家，或送給在終點等你的人</li>
+        <li>花會謝，但它在你家桌上的那幾天，都是這場跑步的延長</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
 <section class="block" id="register">
   <div class="wrap">
     <div class="form-wrap">
@@ -328,7 +394,7 @@ footer .fl{margin:0 0 8px;}
       <p class="form-sub">標示 <span class="req">*</span> 為必填。送出後會寄一封確認信到你的信箱。</p>
 
       <div class="closed-banner" id="closedBanner"></div>
-      <p class="deadline-note" id="deadlineNote">⏳ 報名至 <b>10/24（六）24:00</b> 截止。花材需提前向花店預訂，截止後無法再加人。</p>
+      <p class="deadline-note" id="deadlineNote">⏳ 報名至 <b>10/24（六）24:00</b> 截止。花材需提前預訂，截止後無法再加人。</p>
       <div class="alertbox" id="alertBox"></div>
 
       <form id="regForm" novalidate>
@@ -419,7 +485,6 @@ footer .fl{margin:0 0 8px;}
               <li><b>本活動未投保任何保險</b>，主辦單位未為本活動投保公共意外責任險或團體平安險。參加者請自行評估運動風險並斟酌自行投保；活動期間若發生意外，工作人員會協助現場處置與緊急聯絡，但本活動不提供保險理賠。</li>
               <li>本活動於一般道路與公園步道進行，<b>不進行交通管制</b>。請全程走人行道與行人穿越道，遵守號誌，路口由工作人員引導整組停等後再通過。</li>
               <li>請自行評估身體狀況，有心血管疾病、近期受傷或身體不適者請勿勉強參加。活動中如有不適請立即向工作人員反映。</li>
-              <li>花材由合作花店提供，數量依報名人數採買：拾花巡禮於沿途三站收集，安森秋跑的花材於終點提供。</li>
               <li>報名資料僅供本次活動聯繫與名單管理使用，活動結束後依規定銷毀。</li>
               <li>活動現場會進行攝影紀錄，照片可能用於 NID 社群與活動紀錄；不願入鏡者請於報到時告知工作人員。</li>
               <li>遇颱風、豪雨等不可抗力因素，主辦單位得調整或取消活動，將以 Email 與 LINE 另行通知。</li>
