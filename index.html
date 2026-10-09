@@ -86,7 +86,18 @@ section.block{padding:52px 0 8px;}
 
 /* ───── 組別卡 ───── */
 .cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:0 0 16px;}
-.paynote{font-size:15px;color:var(--body);margin:0 0 16px;line-height:1.7;}
+.feebar{background:var(--sage-soft);border:1px solid var(--sage-line);border-radius:16px;
+  padding:20px 24px;margin:0 0 16px;}
+.feebar .fk{font-size:12.5px;letter-spacing:.14em;font-weight:700;color:var(--sage);margin:0 0 8px;}
+.feebar .fv{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;
+  font-size:17px;color:#2f4a2b;margin:0 0 6px;line-height:1.5;}
+.feebar .fv b{font-size:23px;font-weight:900;color:var(--rose);}
+.feebar .fsep{color:var(--sage-line);}
+.feebar .fn{font-size:14px;color:#3f5c3a;margin:0;line-height:1.6;}
+@media(max-width:560px){
+  .feebar .fv{flex-direction:column;gap:2px;}
+  .feebar .fsep{display:none;}
+}
 @media(max-width:640px){.cat-grid{grid-template-columns:1fr;}}
 .catcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;}
 .catcard.rose{background:var(--blush);border-color:var(--blush-line);}
@@ -262,7 +273,6 @@ footer .fl{margin:0 0 8px;}
         <p class="cd">約 5.1 – 5.6 KM</p>
         <p class="cl">公園 → 禮洋 → 浪花 → Tipsy → 公園，三站各收一枝花。可跑可走，重點是互動不是成績。回到安森後，由浪花花藝現場帶<b>花藝教學與包裝</b>，把收集到的花紮成一束帶回家。</p>
         <p class="cq">預估 55 – 65 分鐘</p>
-        <p class="cfee">當期學員免費・非當期學員 NT$500</p>
         <p class="ccount" id="count-flower">目前 <b>–</b> 人報名</p>
       </div>
       <div class="catcard sage">
@@ -270,12 +280,15 @@ footer .fl{margin:0 0 8px;}
         <p class="cd">2 / 3 / 4 圈</p>
         <p class="cl">留在大安森林公園跑圈，不停站、不收花。依能力自選圈數，教練帶跑。回到安森後，<b>一樣由浪花花藝帶花藝教學與包裝</b>，花材由主辦提供。</p>
         <p class="cq">預估 30 – 60 分鐘</p>
-        <p class="cfee">當期學員免費・非當期學員 NT$500</p>
         <p class="ccount" id="count-park">目前 <b>–</b> 人報名</p>
       </div>
     </div>
     <p class="totalcount" id="count-total">目前已有 <b>–</b> 人報名。</p>
-    <p class="paynote">需繳費者於<b>當天報到時現場現金繳款</b>，不需事先匯款。</p>
+    <div class="feebar">
+      <p class="fk">費用｜兩組同價</p>
+      <p class="fv"><span>NID 當期學員 <b>免費</b></span><span class="fsep">·</span><span>非當期學員 <b>NT$500</b></span></p>
+      <p class="fn">需繳費者於當天報到時現場現金繳款，不需事先匯款。</p>
+    </div>
     <div class="warn">
       <h3>⚠️ 組別選定後不得更換</h3>
       <p>花材是依報名人數向花店預訂的，<b>送出後無法改組別，活動當天也不接受臨時換組</b>。</p>
@@ -328,7 +341,7 @@ footer .fl{margin:0 0 8px;}
               <span class="box">
                 <span class="pt">拾花巡禮</span>
                 <span class="pd">跑訪三間花店，每站收一枝花</span>
-                <span class="pm">約 5.1 – 5.6 km ・ 當期學員免費／非當期 NT$500</span>
+                <span class="pm">約 5.1 – 5.6 km</span>
               </span>
               <span class="tick">✓</span>
             </label>
@@ -337,7 +350,7 @@ footer .fl{margin:0 0 8px;}
               <span class="box">
                 <span class="pt">安森秋跑</span>
                 <span class="pd">留在公園跑圈，終點一樣做花</span>
-                <span class="pm">2 / 3 / 4 圈 ・ 當期學員免費／非當期 NT$500</span>
+                <span class="pm">2 / 3 / 4 圈</span>
               </span>
               <span class="tick">✓</span>
             </label>
