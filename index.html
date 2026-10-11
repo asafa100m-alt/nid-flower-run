@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>RUN FOR FLOWERS 花園路跑｜NID October Family Day 報名</title>
-<meta name="description" content="2026.10.31（六）08:50–11:00，大安森林公園環形迴廊。拾花巡禮（約 5K）或安森秋跑（2–4 圈），二選一。" />
+<meta name="description" content="2026.10.31（六）08:50–11:00，大安森林公園環形迴廊。拾花巡禮組（約 5K）或安森秋跑組（2–4 圈），二選一。" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@500;600;700&display=swap" rel="stylesheet">
@@ -343,7 +343,7 @@ footer .fl{margin:0 0 8px;}
   <div class="wrap">
     <p class="sec-eyebrow">F L O R I S T S</p>
     <h2 class="sec-title">沿途的三間花店</h2>
-    <p class="p">拾花巡禮依路線順序經過這三間店，三間店、三種屬於跑者的力量。</p>
+    <p class="p">拾花巡禮組依路線順序經過這三間店，三間店、三種屬於跑者的力量。</p>
     <div class="journey">
       <div class="jn jn-top">
         <p class="jrow"><span class="jg jg-park"><svg viewBox="-46 -46 92 92" aria-hidden="true"><ellipse rx="25" ry="15" fill="none" stroke="#516C4B" stroke-width="6"/><circle cx="0" cy="-15" r="6" fill="#B8395F"/></svg></span><span class="jh">大安森林公園</span></p>
@@ -403,14 +403,14 @@ footer .fl{margin:0 0 8px;}
     <p class="p">報到、熱身、出發、收操全部一起，中間分成兩條路線各跑各的。</p>
     <div class="cat-grid">
       <div class="catcard rose">
-        <p class="ct">拾花巡禮</p>
+        <p class="ct">拾花巡禮組</p>
         <p class="cd">約 5.1 – 5.6 KM</p>
         <p class="cl">出公園跑訪三間花店，可跑可走，重點是互動不是成績。</p>
         <p class="cq">預估 55 – 65 分鐘</p>
         <p class="ccount" id="count-flower">目前 <b>–</b> 人報名</p>
       </div>
       <div class="catcard sage">
-        <p class="ct">安森秋跑</p>
+        <p class="ct">安森秋跑組</p>
         <p class="cd">2 / 3 / 4 圈</p>
         <p class="cl">留在大安森林公園跑圈，依能力自選圈數，教練帶跑。</p>
         <p class="cq">預估 30 – 60 分鐘</p>
@@ -449,7 +449,7 @@ footer .fl{margin:0 0 8px;}
             <label class="pick">
               <input type="radio" name="category" value="拾花巡禮" />
               <span class="box">
-                <span class="pt">拾花巡禮</span>
+                <span class="pt">拾花巡禮組</span>
                 <span class="pd">跑訪三間花店，沿途取花</span>
                 <span class="pm">約 5.1 – 5.6 km</span>
               </span>
@@ -458,7 +458,7 @@ footer .fl{margin:0 0 8px;}
             <label class="pick">
               <input type="radio" name="category" value="安森秋跑" />
               <span class="box">
-                <span class="pt">安森秋跑</span>
+                <span class="pt">安森秋跑組</span>
                 <span class="pd">留在公園跑圈，終點一樣做花</span>
                 <span class="pm">2 / 3 / 4 圈</span>
               </span>
@@ -637,6 +637,8 @@ footer .fl{margin:0 0 8px;}
     var r = form.querySelector('input[name="category"]:checked');
     return r ? r.value : "";
   }
+  /* 畫面上一律加「組」；送出與後台仍用原本的組別名稱 */
+  function catLabel(c) { return c ? c + "組" : ""; }
   function feeFor(cat, club) {
     if (club !== NON_MEMBER_LABEL) return 0;
     return FEE_NON_MEMBER[cat] || 0;
@@ -667,8 +669,8 @@ footer .fl{margin:0 0 8px;}
     var amt = feeFor(cat, club);
     feeAmountEl.textContent = amt ? ("NT$" + amt) : "NT$0";
     feeDetailEl.innerHTML = amt
-      ? ("非 NID 當期學員・" + esc(cat) + "，<b>當天報到時現場現金繳款</b>，不需事先匯款。")
-      : (esc(cat) + "不收費，當天直接到<b>環形迴廊</b>報到就好。");
+      ? ("非 NID 當期學員・" + esc(catLabel(cat)) + "，<b>當天報到時現場現金繳款</b>，不需事先匯款。")
+      : (esc(catLabel(cat)) + "不收費，當天直接到<b>環形迴廊</b>報到就好。");
   }
   /* 報名人數：只取數字，抓不到就整塊不顯示，不會秀出誤導的 0 */
   function loadCounts() {
@@ -746,7 +748,7 @@ footer .fl{margin:0 0 8px;}
     }
 
     /* 組別不可更換 — 送出前再確認一次 */
-    if (!window.confirm("你選的是「" + payload.category + "」。\n\n花材需事先預訂，送出後不能更換組別，活動當天也不接受臨時換組。\n確定要送出嗎？")) return;
+    if (!window.confirm("你選的是「" + catLabel(payload.category) + "」。\n\n花材需事先預訂，送出後不能更換組別，活動當天也不接受臨時換組。\n確定要送出嗎？")) return;
 
     payload.fee = feeFor(payload.category, payload.club);
 
@@ -784,7 +786,7 @@ footer .fl{margin:0 0 8px;}
       if (result.status === "closed") {
         showAlert("報名已截止", esc(result.message || "") + '<br />請到 <a href="' + LINE_OFFICIAL + '" target="_blank" rel="noopener noreferrer">NID 官方 LINE</a> 問問看。');
       } else if (result.status === "full") {
-        showAlert("名額已滿 😢", "「" + esc(result.category || "這個組別") + "」的名額剛好被搶完，<b>這次沒有送出</b>。<br />可以改選另一個組別，或到 <a href=\"" + LINE_OFFICIAL + "\" target=\"_blank\" rel=\"noopener noreferrer\">NID 官方 LINE</a> 問候補。");
+        showAlert("名額已滿 😢", "「" + esc(catLabel(result.category) || "這個組別") + "」的名額剛好被搶完，<b>這次沒有送出</b>。<br />可以改選另一個組別，或到 <a href=\"" + LINE_OFFICIAL + "\" target=\"_blank\" rel=\"noopener noreferrer\">NID 官方 LINE</a> 問候補。");
       } else if (result.code === "dup_email") {
         showAlert("這個 Email 已經報名過了", "系統查到 <b>" + esc(result.email || payload.email) + "</b> 已經有一筆報名，<b>這次沒有重複送出</b>。<br />如果要修改資料或確認狀態，請到 <a href=\"" + LINE_OFFICIAL + "\" target=\"_blank\" rel=\"noopener noreferrer\">NID 官方 LINE</a> 私訊小編。");
       } else {
