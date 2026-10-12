@@ -309,7 +309,7 @@ footer .fl{margin:0 0 8px;}
     <hr class="rule" />
     <p class="lede">跑的每一步，都是生命的花期，<br />你是帶著什麼力量前進呢？</p>
     <a class="hero-cta" href="#register">我要報名 →</a>
-    <p class="deadline">⏳ 報名至 <b>10/27（二）</b> 截止 —— 花材需提前預訂，逾期恕不受理</p>
+    <p class="deadline">⏳ 限額 <b>60 人</b>・報名至 <b>10/27（二）</b> 截止 —— 額滿或逾期恕不受理</p>
   </div>
   <div class="hero-art wf-art wf-sway" aria-hidden="true">
     <div class="wf-grow" style="height:100%"><svg><use href="#wf-poppy"/></svg></div>
@@ -439,7 +439,7 @@ footer .fl{margin:0 0 8px;}
       <p class="form-sub">標示 <span class="req">*</span> 為必填。送出後會寄一封確認信到你的信箱。</p>
 
       <div class="closed-banner" id="closedBanner"></div>
-      <p class="deadline-note" id="deadlineNote">⏳ 報名至 <b>10/27（二）24:00</b> 截止。花材需提前預訂，截止後無法再加人。</p>
+      <p class="deadline-note" id="deadlineNote">⏳ 報名至 <b>10/27（二）24:00</b> 截止，<b>限額 60 人，額滿提前關閉</b>。花材需提前預訂，截止後無法再加人。</p>
       <div class="alertbox" id="alertBox"></div>
 
       <form id="regForm" novalidate>
@@ -590,6 +590,8 @@ footer .fl{margin:0 0 8px;}
   // 報名截止時間；設為 null 代表不限制。
   var REG_CLOSE_AT = new Date("2026-10-27T23:59:59+08:00");
   var REG_CLOSE_TEXT = "2026/10/27（二）24:00";
+  // 總名額上限；設 0 表示不限（後台會再擋一次，這裡只負責顯示與提前鎖定）
+  var CAPACITY = 60;
   // 非當期學員費用，依組別不同
   var FEE_NON_MEMBER = { "拾花巡禮": 500, "安森秋跑": 500 };
   var NON_MEMBER_LABEL = "非 NID 當期學員";
@@ -690,8 +692,23 @@ footer .fl{margin:0 0 8px;}
           el.querySelector("b").textContent = d.byCategory[cat];
           el.classList.add("show");
         });
+        var cap  = (typeof d.capacity === "number" && d.capacity > 0) ? d.capacity : CAPACITY;
+        var left = cap > 0 ? Math.max(0, cap - d.total) : null;
         var t = document.getElementById("count-total");
-        if (t) { t.querySelector("b").textContent = d.total; t.classList.add("show"); }
+        if (t) {
+          t.innerHTML = cap > 0
+            ? (left > 0
+                ? "目前已有 <b>" + d.total + "</b> 人報名，名額 " + cap + " 人，只剩 <b>" + left + "</b> 位"
+                : "名額 " + cap + " 人<b>已額滿</b>")
+            : "目前已有 <b>" + d.total + "</b> 人報名。";
+          t.classList.add("show");
+        }
+        if (cap > 0 && d.total >= cap && !REG_CLOSED) {
+          lockForm("<b>報名名額 " + cap + " 人已額滿。</b><br />" +
+                   "如果想候補，請到 " +
+                   '<a href="' + LINE_OFFICIAL + '" target="_blank" rel="noopener noreferrer" style="color:#fff;">NID 官方 LINE</a> 私訊小編。');
+          submitBtn.textContent = "名額已滿";
+        }
       })
       .catch(function (e) { console.warn("人數讀取失敗", e); });
   }
@@ -790,7 +807,7 @@ footer .fl{margin:0 0 8px;}
       if (result.status === "closed") {
         showAlert("報名已截止", esc(result.message || "") + '<br />請到 <a href="' + LINE_OFFICIAL + '" target="_blank" rel="noopener noreferrer">NID 官方 LINE</a> 問問看。');
       } else if (result.status === "full") {
-        showAlert("名額已滿 😢", "「" + esc(catLabel(result.category) || "這個組別") + "」的名額剛好被搶完，<b>這次沒有送出</b>。<br />可以改選另一個組別，或到 <a href=\"" + LINE_OFFICIAL + "\" target=\"_blank\" rel=\"noopener noreferrer\">NID 官方 LINE</a> 問候補。");
+        showAlert("名額已滿 😢", "名額剛好在你送出前被搶完了，<b>這次沒有送出</b>。<br />想候補的話，請到 <a href=\"" + LINE_OFFICIAL + "\" target=\"_blank\" rel=\"noopener noreferrer\">NID 官方 LINE</a> 私訊小編。");
       } else if (result.code === "dup_email") {
         showAlert("這個 Email 已經報名過了", "系統查到 <b>" + esc(result.email || payload.email) + "</b> 已經有一筆報名，<b>這次沒有重複送出</b>。<br />如果要修改資料或確認狀態，請到 <a href=\"" + LINE_OFFICIAL + "\" target=\"_blank\" rel=\"noopener noreferrer\">NID 官方 LINE</a> 私訊小編。");
       } else {

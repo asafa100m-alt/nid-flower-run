@@ -27,6 +27,9 @@ var ADMIN_KEY = 'CHANGE_ME_請改掉這組字串';
 // 報名截止（與前端一致）
 var REG_CLOSE_AT = new Date('2026-10-27T23:59:59+08:00');
 
+// 總名額上限；設 0 表示不限
+var CAPACITY = 60;
+
 // 非 NID 當期學員的費用，依組別
 var FEE = { '拾花巡禮': 500, '安森秋跑': 500 };
 var NON_MEMBER_LABEL = '非 NID 當期學員';
@@ -186,6 +189,12 @@ function doPost(e) {
       }
     }
 
+    // 名額上限 —— 在同一個鎖裡算，避免兩人同時送出衝破上限
+    if (CAPACITY > 0 && rows.length >= CAPACITY) {
+      return json_({ status: 'full', total: rows.length, capacity: CAPACITY,
+        message: '報名人數已達上限 ' + CAPACITY + ' 人。' });
+    }
+
     // 費用一律後端重算，不採用前端送來的數字
     var fee = feeFor_(category, club);
 
@@ -309,7 +318,9 @@ function doGet(e) {
     var rows = allRows_(), by = {};
     CATEGORIES.forEach(function (c) { by[c] = 0; });
     rows.forEach(function (r) { if (by[r[1]] !== undefined) by[r[1]]++; });
-    return json_({ status: 'ok', total: rows.length, byCategory: by });
+    return json_({ status: 'ok', total: rows.length, byCategory: by,
+                   capacity: CAPACITY,
+                   remaining: CAPACITY > 0 ? Math.max(0, CAPACITY - rows.length) : null });
   }
 
   return ContentService.createTextOutput(
