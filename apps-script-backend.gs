@@ -213,6 +213,9 @@ function doPost(e) {
   }
 }
 
+/* 信件顯示用：組別一律加「組」；寫進試算表與比對用的仍是原本的名稱 */
+function catLabel_(c) { c = str_(c); return c ? c + '組' : ''; }
+
 /* ══════════════ 確認信 ══════════════ */
 
 function sendConfirm_(r) {
@@ -229,7 +232,7 @@ function sendConfirm_(r) {
       '<div style="border:1px solid #e4ddd2;border-top:0;border-radius:0 0 14px 14px;padding:26px 24px">' +
         '<p style="margin:0 0 18px;font-size:15px">' + esc_(r.name) + ' 你好，已經收到你的報名，以下是你填的資料：</p>' +
         '<table style="width:100%;border-collapse:collapse;font-size:14px">' +
-          row_('組別', r.category) +
+          row_('組別', catLabel_(r.category)) +
           row_('姓名', r.name) +
           row_('Email', r.email) +
           row_('手機', r.phone) +
@@ -262,7 +265,7 @@ function sendConfirm_(r) {
   var text =
     '【' + EVENT_NAME + '】報名成功\n\n' +
     r.name + ' 你好，已經收到你的報名。\n\n' +
-    '組別：' + r.category + '\n' +
+    '組別：' + catLabel_(r.category) + '\n' +
     'Email：' + r.email + '\n' +
     '手機：' + r.phone + '\n' +
     '隸屬戰隊：' + r.club + '\n' +
@@ -276,7 +279,7 @@ function sendConfirm_(r) {
 
   MailApp.sendEmail({
     to: r.email,
-    subject: '【' + EVENT_NAME + '】報名成功 — ' + r.category,
+    subject: '【' + EVENT_NAME + '】報名成功 — ' + catLabel_(r.category),
     body: text,
     htmlBody: html,
     name: MAIL_FROM
