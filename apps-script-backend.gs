@@ -25,7 +25,7 @@ var SHEET_ID = '';
 var ADMIN_KEY = 'CHANGE_ME_請改掉這組字串';
 
 // 報名截止（與前端一致）
-var REG_CLOSE_AT = new Date('2026-10-24T23:59:59+08:00');
+var REG_CLOSE_AT = new Date('2026-10-27T23:59:59+08:00');
 
 // 非 NID 當期學員的費用，依組別
 var FEE = { '拾花巡禮': 500, '安森秋跑': 500 };
