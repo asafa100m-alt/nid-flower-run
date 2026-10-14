@@ -31,8 +31,8 @@ var REG_CLOSE_AT = new Date('2026-10-27T23:59:59+08:00');
 var CAPACITY = 60;
 
 // 保留席：一般報名只開放到 CAPACITY - RESERVED，保留的名額要用下面的代碼才報得進來
-// （2026-10-14 起保留 3 席給浪花店長艾琳的朋友；不需要保留時把 RESERVED 改成 0）
-var RESERVED = 3;
+// （2026-10-14：改成直接在試算表放 3 列「艾琳保留名額」佔位，所以這裡歸 0，避免重複扣兩次名額）
+var RESERVED = 0;
 var RESERVE_CODE = 'ELAINE3';
 
 // 非 NID 當期學員的費用，依組別
