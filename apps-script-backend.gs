@@ -30,6 +30,11 @@ var REG_CLOSE_AT = new Date('2026-10-27T23:59:59+08:00');
 // 總名額上限；設 0 表示不限
 var CAPACITY = 60;
 
+// 保留席：一般報名只開放到 CAPACITY - RESERVED，保留的名額要用下面的代碼才報得進來
+// （2026-10-14 起保留 3 席給浪花店長艾琳的朋友；不需要保留時把 RESERVED 改成 0）
+var RESERVED = 3;
+var RESERVE_CODE = 'ELAINE3';
+
 // 非 NID 當期學員的費用，依組別
 var FEE = { '拾花巡禮': 500, '安森秋跑': 500 };
 var NON_MEMBER_LABEL = '非 NID 當期學員';
@@ -190,9 +195,12 @@ function doPost(e) {
     }
 
     // 名額上限 —— 在同一個鎖裡算，避免兩人同時送出衝破上限
-    if (CAPACITY > 0 && rows.length >= CAPACITY) {
+    // 帶對保留席代碼的人可以用到最後 3 席，一般報名只開放到 CAPACITY - RESERVED
+    var useReserved = RESERVE_CODE && str_(d.invite) === RESERVE_CODE;
+    var openCap = CAPACITY > 0 ? Math.max(0, CAPACITY - (useReserved ? 0 : RESERVED)) : 0;
+    if (CAPACITY > 0 && rows.length >= openCap) {
       return json_({ status: 'full', total: rows.length, capacity: CAPACITY,
-        message: '報名人數已達上限 ' + CAPACITY + ' 人。' });
+        message: '報名人數已達上限。' });
     }
 
     // 費用一律後端重算，不採用前端送來的數字
@@ -319,8 +327,8 @@ function doGet(e) {
     CATEGORIES.forEach(function (c) { by[c] = 0; });
     rows.forEach(function (r) { if (by[r[1]] !== undefined) by[r[1]]++; });
     return json_({ status: 'ok', total: rows.length, byCategory: by,
-                   capacity: CAPACITY,
-                   remaining: CAPACITY > 0 ? Math.max(0, CAPACITY - rows.length) : null });
+                   capacity: CAPACITY, reserved: RESERVED,
+                   remaining: CAPACITY > 0 ? Math.max(0, CAPACITY - RESERVED - rows.length) : null });
   }
 
   return ContentService.createTextOutput(
