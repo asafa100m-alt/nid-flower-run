@@ -420,6 +420,7 @@ footer .fl{margin:0 0 8px;}
     </div>
     <p class="note">兩組最後都回到環形迴廊，一起收操、一起做花。</p>
     <p class="totalcount" id="count-total">目前已有 <b>–</b> 人報名。</p>
+    <p class="totalcount" id="count-baseplus">Base+ 目前人數 <b>–</b> 人</p>
     <div class="feebar">
       <p class="fk">費用｜兩組同價</p>
       <p class="fv"><span>NID 當期學員 <b>免費</b></span><span class="fsep">·</span><span>非當期學員 <b>NT$500</b></span></p>
@@ -712,6 +713,11 @@ footer .fl{margin:0 0 8px;}
                 : "開放名額<b>已額滿</b>")
             : "目前已有 <b>" + d.total + "</b> 人報名。";
           t.classList.add("show");
+        }
+        var bp = document.getElementById("count-baseplus");
+        if (bp && typeof d.uncapped === "number") {
+          bp.querySelector("b").textContent = d.uncapped;
+          bp.classList.add("show");
         }
         if (cap > 0 && used >= open && !REG_CLOSED) {
           lockForm("<b>報名名額已額滿。</b><br />" +

@@ -342,6 +342,7 @@ function doGet(e) {
     var counted = cappedCount_(rows);
     return json_({ status: 'ok', total: rows.length, byCategory: by,
                    capacity: CAPACITY, reserved: RESERVED, counted: counted,
+                   uncapped: rows.length - counted,
                    remaining: CAPACITY > 0 ? Math.max(0, CAPACITY - RESERVED - counted) : null });
   }
 
