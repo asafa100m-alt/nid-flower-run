@@ -35,6 +35,9 @@ var CAPACITY = 60;
 var RESERVED = 0;
 var RESERVE_CODE = 'ELAINE3';
 
+// 這些戰隊不佔 60 人名額（照常收、照常寄信，只是不算進上限）
+var UNCAPPED_CLUBS = ['Base+戰隊'];
+
 // 非 NID 當期學員的費用，依組別
 var FEE = { '拾花巡禮': 500, '安森秋跑': 500 };
 var NON_MEMBER_LABEL = '非 NID 當期學員';
@@ -144,6 +147,15 @@ function phoneOk_(v) {
   return d.length >= 8 && d.length <= 10 && d.charAt(0) === '0';
 }
 
+// 算進名額的人數（扣掉不佔名額的戰隊）
+function cappedCount_(rows) {
+  var n = 0;
+  for (var i = 0; i < rows.length; i++) {
+    if (UNCAPPED_CLUBS.indexOf(str_(rows[i][5])) < 0) n++;
+  }
+  return n;
+}
+
 function feeFor_(category, club) {
   if (club !== NON_MEMBER_LABEL) return 0;
   return FEE[category] || 0;
@@ -198,7 +210,8 @@ function doPost(e) {
     // 帶對保留席代碼的人可以用到最後 3 席，一般報名只開放到 CAPACITY - RESERVED
     var useReserved = RESERVE_CODE && str_(d.invite) === RESERVE_CODE;
     var openCap = CAPACITY > 0 ? Math.max(0, CAPACITY - (useReserved ? 0 : RESERVED)) : 0;
-    if (CAPACITY > 0 && rows.length >= openCap) {
+    var uncapped = UNCAPPED_CLUBS.indexOf(club) >= 0;
+    if (!uncapped && CAPACITY > 0 && cappedCount_(rows) >= openCap) {
       return json_({ status: 'full', total: rows.length, capacity: CAPACITY,
         message: '報名人數已達上限。' });
     }
@@ -326,9 +339,10 @@ function doGet(e) {
     var rows = allRows_(), by = {};
     CATEGORIES.forEach(function (c) { by[c] = 0; });
     rows.forEach(function (r) { if (by[r[1]] !== undefined) by[r[1]]++; });
+    var counted = cappedCount_(rows);
     return json_({ status: 'ok', total: rows.length, byCategory: by,
-                   capacity: CAPACITY, reserved: RESERVED,
-                   remaining: CAPACITY > 0 ? Math.max(0, CAPACITY - RESERVED - rows.length) : null });
+                   capacity: CAPACITY, reserved: RESERVED, counted: counted,
+                   remaining: CAPACITY > 0 ? Math.max(0, CAPACITY - RESERVED - counted) : null });
   }
 
   return ContentService.createTextOutput(
