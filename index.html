@@ -596,6 +596,9 @@ footer .fl{margin:0 0 8px;}
   var CAPACITY = 60;
   // 保留席：一般報名只開放到 CAPACITY - RESERVED；帶 ?invite= 代碼的連結才用得到保留席
   var RESERVED = 3;
+  // 不佔名額的戰隊：一般名額滿了之後，這些人還是可以報名
+  var UNCAPPED_CLUBS = ["Base+戰隊"];
+  var FULL = false;
   var INVITE = (new URLSearchParams(location.search).get("invite") || "").trim();
   // 非當期學員費用，依組別不同
   var FEE_NON_MEMBER = { "拾花巡禮": 500, "安森秋跑": 500 };
@@ -720,17 +723,28 @@ footer .fl{margin:0 0 8px;}
           bp.classList.add("show");
         }
         if (cap > 0 && used >= open && !REG_CLOSED) {
-          lockForm("<b>報名名額已額滿。</b><br />" +
+          FULL = true;
+          var fullBanner = document.getElementById("closedBanner");
+          fullBanner.innerHTML = "<b>報名名額已額滿。</b><br />" +
                    "如果想候補，請到 " +
-                   '<a href="' + LINE_OFFICIAL + '" target="_blank" rel="noopener noreferrer" style="color:#fff;">NID 官方 LINE</a> 私訊小編。');
-          submitBtn.textContent = "名額已滿";
+                   '<a href="' + LINE_OFFICIAL + '" target="_blank" rel="noopener noreferrer" style="color:#fff;">NID 官方 LINE</a> 私訊小編。';
+          fullBanner.classList.add("show");
+          syncFullState();
         }
       })
       .catch(function (e) { console.warn("人數讀取失敗", e); });
   }
   loadCounts();
 
-  clubSelect.addEventListener("change", updateFee);
+  /* 額滿之後：不佔名額的戰隊仍可送出，其他戰隊才擋 */
+  function syncFullState() {
+    if (!FULL || REG_CLOSED) return;
+    var ok = UNCAPPED_CLUBS.indexOf(clubSelect.value) >= 0;
+    submitBtn.disabled = !ok;
+    submitBtn.textContent = ok ? "送出報名" : "名額已滿";
+  }
+
+  clubSelect.addEventListener("change", function () { updateFee(); syncFullState(); });
 
   /* 活動 LINE 社群按鈕 */
   var lineGroupBtn = document.getElementById("lineGroupBtn");
@@ -781,6 +795,12 @@ footer .fl{margin:0 0 8px;}
     if (!valid) {
       var first = form.querySelector(".err.show, .has-error");
       if (first) first.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+
+    if (FULL && UNCAPPED_CLUBS.indexOf(payload.club) < 0) {
+      showAlert("名額已滿 😢", "一般名額已經額滿了，<b>這次沒有送出</b>。<br />想候補的話，請到 " +
+        '<a href="' + LINE_OFFICIAL + '" target="_blank" rel="noopener noreferrer">NID 官方 LINE</a> 私訊小編。');
       return;
     }
 
