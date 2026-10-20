@@ -28,14 +28,14 @@ var ADMIN_KEY = 'CHANGE_ME_請改掉這組字串';
 var REG_CLOSE_AT = new Date('2026-10-27T23:59:59+08:00');
 
 // 總名額上限；設 0 表示不限
-var CAPACITY = 60;
+var CAPACITY = 80;
 
 // 保留席：一般報名只開放到 CAPACITY - RESERVED，保留的名額要用下面的代碼才報得進來
 // （2026-10-14：改成直接在試算表放 3 列「艾琳保留名額」佔位，所以這裡歸 0，避免重複扣兩次名額）
 var RESERVED = 0;
 var RESERVE_CODE = 'ELAINE3';
 
-// 這些戰隊不佔 60 人名額（照常收、照常寄信，只是不算進上限）
+// 這些戰隊不佔名額（照常收、照常寄信，只是不算進上限）
 var UNCAPPED_CLUBS = ['Base+戰隊'];
 
 // 非 NID 當期學員的費用，依組別
