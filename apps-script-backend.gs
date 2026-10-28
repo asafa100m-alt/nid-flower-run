@@ -1,6 +1,6 @@
 /**
  * RUN FOR FLOWERS 花園路跑 — 報名後台
- * NID October Family Day｜2026.10.31（六）08:50–11:00｜大安森林公園環形迴廊
+ * NID October Family Day｜2026.10.31（六）08:50–11:00｜大安森林公園・6號洗手間旁草皮
  *
  * 部署方式：
  *   1. script.google.com 新增專案，把這整份貼進 Code.gs
@@ -25,7 +25,9 @@ var SHEET_ID = '';
 var ADMIN_KEY = 'CHANGE_ME_請改掉這組字串';
 
 // 報名截止（與前端一致）
-var REG_CLOSE_AT = new Date('2026-10-27T23:59:59+08:00');
+// 2026-10-28：3 人取消（2 人有事、1 人受傷），名額釋出，重新開放到 10/29 24:00。
+// 取消的 3 筆已移到試算表的「取消名單」分頁，不再佔名額；滿 80 人仍然自動鎖。
+var REG_CLOSE_AT = new Date('2026-10-29T23:59:59+08:00');
 
 // 總名額上限；設 0 表示不限
 var CAPACITY = 80;
@@ -38,6 +40,10 @@ var RESERVE_CODE = 'ELAINE3';
 // 這些戰隊不佔名額（照常收、照常寄信，只是不算進上限）
 var UNCAPPED_CLUBS = ['Base+戰隊'];
 
+// 人數硬上限：不分戰隊，全部報名筆數達到這個數字就一律關閉（含 UNCAPPED_CLUBS）
+// 2026-10-26：總人數滿 80 就鎖起來
+var TOTAL_CAP = 80;
+
 // 非 NID 當期學員的費用，依組別
 var FEE = { '拾花巡禮': 500, '安森秋跑': 500 };
 var NON_MEMBER_LABEL = '非 NID 當期學員';
@@ -45,7 +51,7 @@ var CATEGORIES = ['拾花巡禮', '安森秋跑'];
 
 var EVENT_NAME  = 'RUN FOR FLOWERS 花園路跑';
 var EVENT_WHEN  = '2026/10/31（六）08:50–11:00';
-var EVENT_WHERE = '大安森林公園・環形迴廊';
+var EVENT_WHERE = '大安森林公園・6號洗手間旁草皮';
 var MAIL_FROM   = 'NID RUN CLUB';
 
 var LINE_OFFICIAL = 'https://page.line.me/eei8717i';
@@ -211,6 +217,11 @@ function doPost(e) {
     var useReserved = RESERVE_CODE && str_(d.invite) === RESERVE_CODE;
     var openCap = CAPACITY > 0 ? Math.max(0, CAPACITY - (useReserved ? 0 : RESERVED)) : 0;
     var uncapped = UNCAPPED_CLUBS.indexOf(club) >= 0;
+    // 總人數硬上限：不分戰隊，滿了就一律擋下
+    if (TOTAL_CAP > 0 && rows.length >= TOTAL_CAP) {
+      return json_({ status: 'full', total: rows.length, capacity: CAPACITY,
+        message: '報名人數已達上限。' });
+    }
     if (!uncapped && CAPACITY > 0 && cappedCount_(rows) >= openCap) {
       return json_({ status: 'full', total: rows.length, capacity: CAPACITY,
         message: '報名人數已達上限。' });
@@ -342,8 +353,10 @@ function doGet(e) {
     var counted = cappedCount_(rows);
     return json_({ status: 'ok', total: rows.length, byCategory: by,
                    capacity: CAPACITY, reserved: RESERVED, counted: counted,
-                   uncapped: rows.length - counted,
-                   remaining: CAPACITY > 0 ? Math.max(0, CAPACITY - RESERVED - counted) : null });
+                   uncapped: rows.length - counted, totalCap: TOTAL_CAP,
+                   remaining: Math.min(
+                     CAPACITY > 0 ? Math.max(0, CAPACITY - RESERVED - counted) : 9999,
+                     TOTAL_CAP > 0 ? Math.max(0, TOTAL_CAP - rows.length) : 9999) });
   }
 
   return ContentService.createTextOutput(
